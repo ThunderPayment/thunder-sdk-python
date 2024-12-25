@@ -39,3 +39,16 @@ class CustomJSONEncoder(json.JSONEncoder):
 
         return super().default(obj)
 
+def json_encode(obj: Any) -> Any:
+    return json.dumps(obj, cls=CustomJSONEncoder)
+
+async def call_universal(func: Callable, *args: Any, **kwargs: Any) -> Any:
+    try:
+        result = func(*args, **kwargs)
+    
+        if inspect.isawaitable(result):
+            result = await result
+        return result
+    
+    except Exception:
+        logger.error(f"Error occured:\n${traceback.format_exc()}")
