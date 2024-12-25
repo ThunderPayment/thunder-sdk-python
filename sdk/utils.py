@@ -28,3 +28,14 @@ def convert_amount_type(amount: str | Decimal) -> Decimal:
 
 def satoshis(amount: str | Decimal) -> int:
     return int(convert_amount_type(amount) * CONVERT_RATE)
+
+def bitcoins(amount: int) -> Decimal:
+    return Decimal(amount) / Decimal(CONVERT_RATE)
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj: Any) -> Any:
+        if isinstance(obj, Decimal):
+            return str(obj)
+
+        return super().default(obj)
+
